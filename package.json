@@ -1,0 +1,63 @@
+{
+  "name": "cmake-extras",
+  "displayName": "CMake Tools Extras",
+  "description": "Little odds and ends built on top of CMake Tools",
+  "icon": "logo.png",
+  "version": "0.9.0",
+  "publisher": "malsyned",
+  "license": "BSD-3-Clause",
+  "engines": {
+    "vscode": "^1.99.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "workspaceContains:**/CMakeLists.txt"
+  ],
+  "extensionDependencies": [
+    "ms-vscode.cmake-tools"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "taskDefinitions": [
+      {
+        "type": "cmake-ensure-toolchain-target",
+        "properties": {
+          "target": {
+            "type": "string",
+            "description": "target architecture to require (leave empty for native target)"
+          }
+        }
+      }
+    ],
+    "commands": [
+      {
+        "command": "cmake-extras.ensure-toolchain-target",
+        "title": "Ensure that the CMake Toolchain's target matches the one required"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "dependencies": {
+    "vscode-cmake-tools": "^1.2.0"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "20.x",
+    "@types/vscode": "^1.99.0",
+    "@typescript-eslint/eslint-plugin": "^8.28.0",
+    "@typescript-eslint/parser": "^8.28.0",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1",
+    "eslint": "^9.23.0",
+    "typescript": "^5.8.2"
+  }
+}
