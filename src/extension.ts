@@ -13,7 +13,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		vscode.tasks.registerTaskProvider('cmake-ensure-toolchain-target', new CMakeEnsureToolchainTaskProvider())
 	);
 	context.subscriptions.push(
-		vscode.commands.registerCommand("cmake-extras.ensure-toolchain-target", ensureToolchainMatchesTarget)
+		vscode.commands.registerCommand("cmake-extras.ensure-toolchain-target", ensureToolchainMatchesTargetCommand)
 	);
 }
 
@@ -24,7 +24,10 @@ class CMakeEnsureToolchainTaskProvider implements vscode.TaskProvider {
 	resolveTask(task: vscode.Task): vscode.ProviderResult<vscode.Task> {
 		const execution = new vscode.CustomExecution(
 			async (resolvedDefinition: vscode.TaskDefinition): Promise<vscode.Pseudoterminal> => {
-			return new CMakeEnsureToolchainPty(resolvedDefinition.target || '');
+			return new CMakeEnsureToolchainPty(
+				resolvedDefinition.target || '',
+				resolvedDefinition.postChangeSteps || []
+			);
 		});
 		const newTask = new vscode.Task(
 			task.definition,
@@ -61,7 +64,24 @@ async function toolchainMatchesTarget(target: string): Promise<boolean>
 	return result;
 }
 
-async function ensureToolchainMatchesTarget(target: string): Promise<string> {
+async function ensureToolchainMatchesTargetCommand(args: string | string[]): Promise<string> {
+	let target: string;
+	let post_change_steps: string[] = [];
+	if (typeof(args) === 'string') {
+		target = args;
+	} else {
+		target = args[0];
+		post_change_steps = args.slice(1);
+	}
+
+	await ensureToolchainMatchesTarget(target, post_change_steps);
+
+	// Return a string so that this command can be used as an input in
+	// launch.json or task.json.
+	return '';
+}
+
+async function ensureToolchainMatchesTarget(target: string, post_change_steps: string[]): Promise<void> {
 	let message: string;
 	if (target) {
 		message = `CMake Toolchain's target doesn't match required target ${target}.`;
@@ -73,14 +93,17 @@ async function ensureToolchainMatchesTarget(target: string): Promise<string> {
 										isCloseAffordance: true };
 	const CONTINUE_ANYWAY: vscode.MessageItem = { title: 'Continue anyway' };
 
+	let toolchain_changed = false;
 	while (!await toolchainMatchesTarget(target)) {
 		let response = await vscode.window.showErrorMessage(
 			message, { modal: true }, SELECT_PRESET, ABORT, CONTINUE_ANYWAY
 		);
 
 		if (response === SELECT_PRESET) {
-			const result: boolean = await vscode.commands.executeCommand('cmake.selectConfigurePreset');
-			if (!result) {
+			const result: Boolean = await vscode.commands.executeCommand('cmake.selectConfigurePreset');
+			if (result) {
+				toolchain_changed = true;
+			} else {
 				response = ABORT;
 			}
 		}
@@ -91,13 +114,15 @@ async function ensureToolchainMatchesTarget(target: string): Promise<string> {
 		}
 	}
 
-	// Return a string so that this command can be used as an input in
-	// launch.json or task.json.
-	return '';
+	if (toolchain_changed) {
+		for (const step of post_change_steps) {
+			await vscode.commands.executeCommand(`cmake.${step}`);
+		}
+	}
 }
 
 class CMakeEnsureToolchainPty implements vscode.Pseudoterminal {
-	constructor(private target: string) { }
+	constructor(private target: string, private post_change_steps: string[]) { }
 	private writeEmitter = new vscode.EventEmitter<string>();
 	private closeEmitter = new vscode.EventEmitter<number>();
 	onDidWrite = this.writeEmitter.event;
@@ -105,7 +130,7 @@ class CMakeEnsureToolchainPty implements vscode.Pseudoterminal {
 
 	async open(_initialDimensions: vscode.TerminalDimensions | undefined): Promise<void> {
 		try {
-			await ensureToolchainMatchesTarget(this.target);
+			await ensureToolchainMatchesTarget(this.target, this.post_change_steps);
 			this.closeEmitter.fire(0);
 		} catch (e) {
 			if (e instanceof AbortError) {

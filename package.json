@@ -30,6 +30,11 @@
           "target": {
             "type": "string",
             "description": "target architecture to require (leave empty for native target)"
+          },
+          "postChangeSteps": {
+            "type": "array",
+            "description": "Additional commands to run after the preset is changed. For example, `setDefaultTarget` or `selectLaunchTarget`",
+            "default": []
           }
         }
       }
