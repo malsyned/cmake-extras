@@ -50,6 +50,7 @@
     "test": "vscode-test"
   },
   "dependencies": {
+    "@vscode/vsce": "^3.3.2",
     "vscode-cmake-tools": "^1.2.0"
   },
   "devDependencies": {
