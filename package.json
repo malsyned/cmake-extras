@@ -7,7 +7,7 @@
     "url": "https://github.com/malsyned/cmake-extras"
   },
   "icon": "res/logo.png",
-  "version": "0.9.2",
+  "version": "0.9.3",
   "publisher": "malsyned",
   "license": "BSD-3-Clause",
   "engines": {
