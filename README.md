@@ -20,7 +20,7 @@ The intended use for this command is on projects with configuration presets that
 
 ### Example
 
-```json
+```jsonc
 {
     "version": "0.2.0",
     "configurations": [
@@ -37,7 +37,7 @@ The intended use for this command is on projects with configuration presets that
             "type": "cortex-debug",
             "servertype": "jlink",
             "device": "RM44L520",
-       },
+       }
     ],
     "inputs": [
         {
@@ -54,7 +54,7 @@ The intended use for this command is on projects with configuration presets that
 
 Since dependent build presets and targets can become invalidated by a change in configure preset, `cmake-extras.ensure-toolchain-target` can take additional arguments specifying commands to run to prompt the user to select new values for those presets. The command arguments are the names of CMake Tools commands with the `cmake.` prefix removed.
 
-```json
+```jsonc
     "args": [ "arm-none-eabi", "selectLaunchTarget" ]
 ```
 
@@ -67,7 +67,7 @@ Good candidates for post-change commands include:
 
 CMake toolchains only have a target string associated with them by CMake Tools if they are cross-compiling toolchains (`CMAKE_CROSSCOMPILING=1`). To ensure that a native compilation toolchain is selected, pass `""` as the target.
 
-```json
+```jsonc
     "args": ""
 ```
 
@@ -77,7 +77,7 @@ This offers the same functionality as [the `cmake-extras.ensure-toolchain-target
 
 The target is configured in the `target` property, and any post-change commands to run are listed in the optional `postChangeCommands` property.
 
-```json
+```jsonc
 {
     "label": "CMake: Ensure ARM Toolchain",
     "type": "cmake-ensure-toolchain-target",
