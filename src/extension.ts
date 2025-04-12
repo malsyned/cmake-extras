@@ -26,7 +26,7 @@ class CMakeEnsureToolchainTaskProvider implements vscode.TaskProvider {
 			async (resolvedDefinition: vscode.TaskDefinition): Promise<vscode.Pseudoterminal> => {
 			return new CMakeEnsureToolchainPty(
 				resolvedDefinition.target || '',
-				resolvedDefinition.postChangeSteps || []
+				resolvedDefinition.postChangeCommands || []
 			);
 		});
 		const newTask = new vscode.Task(
@@ -66,22 +66,22 @@ async function toolchainMatchesTarget(target: string): Promise<boolean> {
 
 async function ensureToolchainMatchesTargetCommand(args: string | string[]): Promise<string> {
 	let target: string;
-	let post_change_steps: string[] = [];
+	let post_change_commands: string[] = [];
 	if (typeof(args) === 'string') {
 		target = args;
 	} else {
 		target = args[0];
-		post_change_steps = args.slice(1);
+		post_change_commands = args.slice(1);
 	}
 
-	await ensureToolchainMatchesTarget(target, post_change_steps);
+	await ensureToolchainMatchesTarget(target, post_change_commands);
 
 	// Return a string so that this command can be used as an input in
 	// launch.json or task.json.
 	return '';
 }
 
-async function ensureToolchainMatchesTarget(target: string, post_change_steps: string[]): Promise<void> {
+async function ensureToolchainMatchesTarget(target: string, post_change_commands: string[]): Promise<void> {
 	let message: string;
 	if (target) {
 		message = `CMake Toolchain's target doesn't match required target ${target}.`;
@@ -115,14 +115,14 @@ async function ensureToolchainMatchesTarget(target: string, post_change_steps: s
 	}
 
 	if (toolchain_changed) {
-		for (const step of post_change_steps) {
+		for (const step of post_change_commands) {
 			await vscode.commands.executeCommand(`cmake.${step}`);
 		}
 	}
 }
 
 class CMakeEnsureToolchainPty implements vscode.Pseudoterminal {
-	constructor(private target: string, private post_change_steps: string[]) { }
+	constructor(private target: string, private post_change_commands: string[]) { }
 	private writeEmitter = new vscode.EventEmitter<string>();
 	private closeEmitter = new vscode.EventEmitter<number>();
 	onDidWrite = this.writeEmitter.event;
@@ -130,7 +130,7 @@ class CMakeEnsureToolchainPty implements vscode.Pseudoterminal {
 
 	async open(_: vscode.TerminalDimensions | undefined): Promise<void> {
 		try {
-			await ensureToolchainMatchesTarget(this.target, this.post_change_steps);
+			await ensureToolchainMatchesTarget(this.target, this.post_change_commands);
 			this.closeEmitter.fire(0);
 		} catch (e) {
 			if (e instanceof AbortError) {
