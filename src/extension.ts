@@ -45,8 +45,7 @@ class CMakeEnsureToolchainTaskProvider implements vscode.TaskProvider {
 	}
 }
 
-async function toolchainMatchesTarget(target: string): Promise<boolean>
-{
+async function toolchainMatchesTarget(target: string): Promise<boolean> {
 	const proj = await api.getProject(vscode.Uri.file(api.getActiveFolderPath()));
 	const toolchains = proj?.codeModel?.toolchains;
 	if (!toolchains) {
@@ -129,7 +128,7 @@ class CMakeEnsureToolchainPty implements vscode.Pseudoterminal {
 	onDidWrite = this.writeEmitter.event;
 	onDidClose = this.closeEmitter.event;
 
-	async open(_initialDimensions: vscode.TerminalDimensions | undefined): Promise<void> {
+	async open(_: vscode.TerminalDimensions | undefined): Promise<void> {
 		try {
 			await ensureToolchainMatchesTarget(this.target, this.post_change_steps);
 			this.closeEmitter.fire(0);
