@@ -2,7 +2,10 @@
   "name": "cmake-extras",
   "displayName": "CMake Tools Extras",
   "description": "Little odds and ends built on top of CMake Tools",
-  "repository": "https://github.com/malsyned/cmake-extras",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/malsyned/cmake-extras"
+  },
   "icon": "res/logo.png",
   "version": "0.9.1",
   "publisher": "malsyned",
