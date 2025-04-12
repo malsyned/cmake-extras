@@ -32,7 +32,8 @@ class CMakeEnsureToolchainTaskProvider implements vscode.TaskProvider {
 		const newTask = new vscode.Task(
 			task.definition,
 			task.scope ?? vscode.TaskScope.Workspace,
-			`${task.definition.label}`,
+			task.definition.label
+			|| `Ensure toolchain target ${task.definition.target}`,
 			'CMake Extras',
 			execution,
 			[]
