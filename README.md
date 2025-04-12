@@ -9,7 +9,7 @@ Little odds and ends built on top of CMake Tools.
 
 ## Command: `cmake-extras.ensure-toolchain-target`
 
-Takes a single string argument, `target`, representing an architecture triplet `<machine>-<vendor>-operatingsystem>`, such as `arm-none-gnuabi` or `x86_64-pc-linux-gnu`. Returns an empty string.
+Takes a string argument representing an architecture triplet `<machine>-<vendor>-operatingsystem>`, such as `arm-none-gnuabi` or `x86_64-pc-linux-gnu`. Returns an empty string.
 
 Checks the configured CMake toolchain's target against the passed in `target`. If it doesn't match, prompts the user to change the selected CMake Configuration Preset.
 
@@ -59,9 +59,9 @@ Since dependent build presets and targets can become invalidated by a change in 
 ```
 
 Good candidates for post-change commands include:
-* `selectBuildPreset`
-* `setDefaultTarget`
-* `selectLaunchTarget`
+* `selectBuildPreset` ("Change Build Preset")
+* `setDefaultTarget` ("Set Build Target")
+* `selectLaunchTarget` ("Set Launch Target")
 
 ### Specifying native target
 
