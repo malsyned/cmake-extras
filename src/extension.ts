@@ -135,6 +135,7 @@ class CMakeEnsureToolchainPty implements vscode.Pseudoterminal {
 			this.closeEmitter.fire(0);
 		} catch (e) {
 			if (e instanceof AbortError) {
+				this.writeEmitter.fire(t(`${String(e)}\n`));
 				this.closeEmitter.fire(1);
 			} else {
 				throw e;
