@@ -62,30 +62,31 @@ async function toolchainMatchesTarget(target: string): Promise<boolean>
 }
 
 async function ensureToolchainMatchesTarget(target: string): Promise<string> {
+	let message: string;
+	if (target) {
+		message = `CMake Toolchain's target doesn't match required target ${target}.`;
+	} else {
+		message = 'CMake Toolchain has a cross-compilation target. Native toolchain required.';
+	}
+	const SELECT_PRESET: vscode.MessageItem = { title: 'Change Configure Preset' };
+	const ABORT: vscode.MessageItem = { title: 'Abort',
+										isCloseAffordance: true };
+	const CONTINUE_ANYWAY: vscode.MessageItem = { title: 'Continue anyway' };
+
 	while (!await toolchainMatchesTarget(target)) {
-		let message: string;
-		if (target) {
-			message = `CMake Toolchain's target doesn't match required target ${target}.`;
-		} else {
-			message = 'CMake Toolchain has a cross-compilation target. Native toolchain required.';
-		}
-		const selectPreset = {title: 'Change Configure Preset', isCloseAffordance: false};
-		const abort = {title: 'Abort', isCloseAffordance: true};
-		const continueAnyway = {title: 'Continue anyway', isCloseAffordance: false};
-		let response = await vscode.window.showErrorMessage<vscode.MessageItem>(
-			message, { modal: true }, selectPreset, abort, continueAnyway
+		let response = await vscode.window.showErrorMessage(
+			message, { modal: true }, SELECT_PRESET, ABORT, CONTINUE_ANYWAY
 		);
 
-
-		if (response === selectPreset) {
+		if (response === SELECT_PRESET) {
 			const result: boolean = await vscode.commands.executeCommand('cmake.selectConfigurePreset');
 			if (!result) {
-				response = abort;
+				response = ABORT;
 			}
 		}
-		if (response === abort) {
+		if (response === ABORT) {
 			throw new AbortError(`Aborted. No CMake Toolchain matching the target ${target} was selected.`);
-		} else if (response === continueAnyway) {
+		} else if (response === CONTINUE_ANYWAY) {
 			break;
 		}
 	}
