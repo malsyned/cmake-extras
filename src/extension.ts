@@ -49,8 +49,8 @@ async function toolchainMatchesTarget(target: string): Promise<boolean> {
 	const proj = await api.getProject(vscode.Uri.file(api.getActiveFolderPath()));
 	const toolchains = proj?.codeModel?.toolchains;
 	if (!toolchains) {
-		// Print some message about being unable to look up toolchains, then
-		// punt
+		// TODO: Print some message about being unable to look up toolchains,
+		// then punt
 		return true;
 	}
 
