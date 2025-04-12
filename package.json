@@ -15,9 +15,7 @@
     "Debuggers",
     "Programming Languages"
   ],
-  "activationEvents": [
-    "workspaceContains:**/CMakeLists.txt"
-  ],
+  "activationEvents": [ ],
   "extensionDependencies": [
     "ms-vscode.cmake-tools"
   ],
