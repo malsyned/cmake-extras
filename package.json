@@ -42,7 +42,7 @@
     ],
     "commands": [
       {
-        "command": "cmake-extras.ensure-toolchain-target",
+        "command": "cmake-extras.ensureToolchainTarget",
         "title": "Ensure that the CMake Toolchain's target matches the one required"
       }
     ]

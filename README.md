@@ -4,16 +4,17 @@ Little odds and ends built on top of CMake Tools.
 
 ## Table of Contents
 
-* [Command: `cmake-extras.ensure-toolchain-target`](#command-cmake-extrasensure-toolchain-target)
+* [Command: `cmake-extras.ensureToolchainTarget`](#command-cmake-extrasensuretoolchaintarget)
 * [Task Type: `cmake-ensure-toolchain-target`](#task-type-cmake-ensure-toolchain-target)
 
-## Command: `cmake-extras.ensure-toolchain-target`
+## Command: `cmake-extras.ensureToolchainTarget`
 
 Takes a string argument representing an architecture triplet `<machine>-<vendor>-operatingsystem>`, such as `arm-none-gnuabi` or `x86_64-pc-linux-gnu`. Returns an empty string.
 
 Checks the configured CMake toolchain's target against the passed in `target`. If it doesn't match, prompts the user to change the selected CMake Configuration Preset.
 
 ![](res/preset-mismatch-dialog.png "Preset Mismatch Dialog")
+
 ![](res/select-preset.png "Preset Select Quick Pick")
 
 The intended use for this command is on projects with configuration presets that target different architectures and use `${command:cmake.launchTargetPath}` in debug configurations that only work for a subset of the target architectures. By prepending it to the `executable` property, variable interpolation is paused while the user is given a chance to select a preset whose target architecture matches the debug configuration's needs.
@@ -43,7 +44,7 @@ The intended use for this command is on projects with configuration presets that
         {
             "id": "ensureARMToolchain",
             "type": "command",
-            "command": "cmake-extras.ensure-toolchain-target",
+            "command": "cmake-extras.ensureToolchainTarget",
             "args": "arm-none-eabi"
         }
     ]
@@ -52,7 +53,7 @@ The intended use for this command is on projects with configuration presets that
 
 ### Post-change commands
 
-Since dependent build presets and targets can become invalidated by a change in configure preset, `cmake-extras.ensure-toolchain-target` can take additional arguments specifying commands to run to prompt the user to select new values for those presets. The command arguments are the names of CMake Tools commands with the `cmake.` prefix removed.
+Since dependent build presets and targets can become invalidated by a change in configure preset, `cmake-extras.ensureToolchainTarget` can take additional arguments specifying commands to run to prompt the user to select new values for those presets. The command arguments are the names of CMake Tools commands with the `cmake.` prefix removed.
 
 ```jsonc
     "args": [ "arm-none-eabi", "selectLaunchTarget" ]
@@ -73,7 +74,7 @@ CMake toolchains only have a target string associated with them by CMake Tools i
 
 ## Task Type: `cmake-ensure-toolchain-target`
 
-This offers the same functionality as [the `cmake-extras.ensure-toolchain-target` command](#command-cmake-extrasensure-toolchain-target), but as a task that can be configured in `tasks.json` and run with the `Tasks: Run Task` command.
+This offers the same functionality as [the `cmake-extras.ensureToolchainTarget` command](#command-cmake-extrasensure-toolchain-target), but as a task that can be configured in `tasks.json` and run with the `Tasks: Run Task` command.
 
 The target is configured in the `target` property, and any post-change commands to run are listed in the optional `postChangeCommands` property.
 

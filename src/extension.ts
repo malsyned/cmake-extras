@@ -13,7 +13,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		vscode.tasks.registerTaskProvider('cmake-ensure-toolchain-target', new CMakeEnsureToolchainTaskProvider())
 	);
 	context.subscriptions.push(
-		vscode.commands.registerCommand("cmake-extras.ensure-toolchain-target", ensureToolchainMatchesTargetCommand)
+		vscode.commands.registerCommand("cmake-extras.ensureToolchainTarget", ensureToolchainMatchesTargetCommand)
 	);
 }
 
